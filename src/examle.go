@@ -80,9 +80,12 @@ func main() {
 	// 	exitCode = 1
 	// }
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 	// TODO: remove this
 >>>>>>> 2e99e0c... Merge branch 'master' of github.com:Azure-Samples/netappfiles-go-smb-sdk-sample
+=======
+>>>>>>> bd05f35... Initil commit to example.src
 	domainJoinUserPassword = ""
 
 	// Getting subscription ID from authentication file
