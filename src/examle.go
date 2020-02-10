@@ -79,6 +79,10 @@ func main() {
 	// 	utils.ConsoleOutput("an error ocurred, domainJoinUserPassword cannot be empty")
 	// 	exitCode = 1
 	// }
+<<<<<<< HEAD
+=======
+	// TODO: remove this
+>>>>>>> 2e99e0c... Merge branch 'master' of github.com:Azure-Samples/netappfiles-go-smb-sdk-sample
 	domainJoinUserPassword = ""
 
 	// Getting subscription ID from authentication file
