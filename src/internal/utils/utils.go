@@ -15,7 +15,7 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/Azure-Samples/netappfiles-go-sdk-sample/internal/models"
+	"github.com/Azure-Samples/netappfiles-go-smb-sdk-sample/internal/models"
 	"golang.org/x/crypto/ssh/terminal"
 )
 

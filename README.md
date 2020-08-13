@@ -114,11 +114,11 @@ Finally, the clean up process takes place (not enabled by default, please change
 2. Clone it locally
     ```bash
     cd github.com/Azure-Samples
-    git clone https://github.com/Azure-Samples/netappfiles-go-sdk-sample.git
+    git clone https://github.com/Azure-Samples/netappfiles-go-smb-sdk-sample.git
     ```
-3. Change folder to **netappfiles-go-sdk-sample/src**
+3. Change folder to **netappfiles-go-smb-sdk-sample/src**
     ```bash
-    cd netappfiles-go-sdk-sample/src
+    cd netappfiles-go-smb-sdk-sample/src
     ```
 4. Make sure you have the `azureauth.json` and its environment variable with the path to it defined (as previously described at [prerequisites](#Prerequisites))
 6. Edit file **example.go** `var()` block and change the variables contents as appropriate (names are self-explanatory).

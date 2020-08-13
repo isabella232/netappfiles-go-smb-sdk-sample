@@ -15,9 +15,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Azure-Samples/netappfiles-go-sdk-sample/internal/iam"
-	"github.com/Azure-Samples/netappfiles-go-sdk-sample/internal/uri"
-	"github.com/Azure-Samples/netappfiles-go-sdk-sample/internal/utils"
+	"github.com/Azure-Samples/netappfiles-go-smb-sdk-sample/internal/iam"
+	"github.com/Azure-Samples/netappfiles-go-smb-sdk-sample/internal/uri"
+	"github.com/Azure-Samples/netappfiles-go-smb-sdk-sample/internal/utils"
 
 	"github.com/Azure/azure-sdk-for-go/services/netapp/mgmt/2020-02-01/netapp"
 	"github.com/Azure/azure-sdk-for-go/services/resources/mgmt/2019-10-01/resources"
