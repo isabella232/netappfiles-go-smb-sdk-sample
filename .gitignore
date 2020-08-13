@@ -333,3 +333,5 @@ ASALocalRun/
 # Go build output
 netappfiles-go-sdk-sample
 netappfiles-go-sdk-sample.*
+
+example.go
