@@ -23,7 +23,7 @@ import (
 
 	"github.com/Azure-Samples/netappfiles-go-sdk-sample/internal/sdkutils"
 	"github.com/Azure-Samples/netappfiles-go-sdk-sample/internal/utils"
-	"github.com/Azure/azure-sdk-for-go/services/netapp/mgmt/2019-10-01/netapp"
+	"github.com/Azure/azure-sdk-for-go/services/netapp/mgmt/2020-02-01/netapp"
 	"github.com/Azure/go-autorest/autorest/to"
 	"github.com/yelinaung/go-haikunator"
 )
@@ -34,9 +34,9 @@ const (
 
 var (
 	shouldCleanUp         bool   = false
-	location              string = "eastus2"
-	resourceGroupName     string = "anf-smb-test-rg"
-	vnetResourceGroupName string = "anf-smb-test-rg"
+	location              string = "eastus"
+	resourceGroupName     string = "anf-smb-rg"
+	vnetResourceGroupName string = "anf-smb-rg"
 	vnetName              string = "adVNET"
 	subnetName            string = "anf-sn"
 	anfAccountName        string = haikunator.New(time.Now().UTC().UnixNano()).Haikunate()
@@ -75,18 +75,12 @@ func main() {
 
 	// Getting Active Directory Identity's password
 	// domainJoinUserPassword = utils.GetPassword("Please type Active Directory's user password that will domain join ANF's SMB server and press [ENTER]:")
-	// if domainJoinUserPassword == "" {
-	// 	utils.ConsoleOutput("an error ocurred, domainJoinUserPassword cannot be empty")
-	// 	exitCode = 1
-	// }
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
+	if domainJoinUserPassword == "" {
+		utils.ConsoleOutput("an error ocurred, domainJoinUserPassword cannot be empty")
+		exitCode = 1
+	}
 	// TODO: remove this
->>>>>>> 2e99e0c... Merge branch 'master' of github.com:Azure-Samples/netappfiles-go-smb-sdk-sample
-=======
->>>>>>> bd05f35... Initil commit to example.src
-	domainJoinUserPassword = ""
+	//domainJoinUserPassword = ""
 
 	// Getting subscription ID from authentication file
 	config, err := utils.ReadAzureBasicInfoJSON(os.Getenv("AZURE_AUTH_LOCATION"))
@@ -186,9 +180,9 @@ func main() {
 	}
 	smbVolumeID = *smbVolume.ID
 	utils.ConsoleOutput(fmt.Sprintf("SMB volume successfully created, resource id: %v", *smbVolume.ID))
-	v := smbVolume.VolumeProperties.MountTargets.(map[string]interface{})
-	smbServerFQDN := string(v["smbServerFQDN"].(string))
-	utils.ConsoleOutput(fmt.Sprintf("\t====> SMB Server FQDN: %v", smbServerFQDN))
+	mountTargets := smbVolume.VolumeProperties.MountTargets
+	utils.ConsoleOutput(fmt.Sprintf("\t====> MountTargets: %v", mountTargets))
+	//utils.ConsoleOutput(fmt.Sprintf("\t====> SMB Server FQDN: %v", smbServerFQDN))
 }
 
 func exit(cntx context.Context) {

@@ -19,8 +19,8 @@ import (
 	"github.com/Azure-Samples/netappfiles-go-sdk-sample/internal/uri"
 	"github.com/Azure-Samples/netappfiles-go-sdk-sample/internal/utils"
 
-	"github.com/Azure/azure-sdk-for-go/services/netapp/mgmt/2019-10-01/netapp"
-	"github.com/Azure/azure-sdk-for-go/services/resources/mgmt/2019-05-01/resources"
+	"github.com/Azure/azure-sdk-for-go/services/netapp/mgmt/2020-02-01/netapp"
+	"github.com/Azure/azure-sdk-for-go/services/resources/mgmt/2019-10-01/resources"
 	"github.com/Azure/go-autorest/autorest/to"
 )
 
@@ -308,11 +308,11 @@ func CreateAnfVolume(ctx context.Context, location, resourceGroupName, accountNa
 }
 
 // UpdateAnfVolume update an ANF volume
-func UpdateAnfVolume(ctx context.Context, location, resourceGroupName, accountName, poolName, volumeName string, volumePropertiesPatch netapp.VolumePatchProperties, tags map[string]*string) (netapp.Volume, error) {
+func UpdateAnfVolume(ctx context.Context, location, resourceGroupName, accountName, poolName, volumeName string, volumePropertiesPatch netapp.VolumePatchProperties, tags map[string]*string) (netapp.VolumesUpdateFuture, error) {
 
 	volumeClient, err := getVolumesClient()
 	if err != nil {
-		return netapp.Volume{}, err
+		return netapp.VolumesUpdateFuture{}, err
 	}
 
 	volume, err := volumeClient.Update(
@@ -329,7 +329,7 @@ func UpdateAnfVolume(ctx context.Context, location, resourceGroupName, accountNa
 	)
 
 	if err != nil {
-		return netapp.Volume{}, fmt.Errorf("cannot update volume: %v", err)
+		return netapp.VolumesUpdateFuture{}, fmt.Errorf("cannot update volume: %v", err)
 	}
 
 	return volume, nil
@@ -347,7 +347,6 @@ func CreateAnfSnapshot(ctx context.Context, location, resourceGroupName, account
 		ctx,
 		netapp.Snapshot{
 			Location: to.StringPtr(location),
-			Tags:     tags,
 		},
 		resourceGroupName,
 		accountName,

@@ -328,3 +328,8 @@ ASALocalRun/
 
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
+
+
+# Go build output
+netappfiles-go-sdk-sample
+netappfiles-go-sdk-sample.*
