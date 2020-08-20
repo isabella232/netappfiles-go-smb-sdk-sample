@@ -16,8 +16,8 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/Azure-Samples/netappfiles-go-smb-sdk-sample/internal/models"
-	"github.com/Azure-Samples/netappfiles-go-smb-sdk-sample/internal/utils"
+	"github.com/Azure-Samples/netappfiles-go-smb-sdk-sample/src/internal/models"
+	"github.com/Azure-Samples/netappfiles-go-smb-sdk-sample/src/internal/utils"
 
 	"github.com/Azure/go-autorest/autorest"
 	"github.com/Azure/go-autorest/autorest/azure/auth"
