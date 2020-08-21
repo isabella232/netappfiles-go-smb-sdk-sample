@@ -78,6 +78,7 @@ func main() {
 	if domainJoinUserPassword == "" {
 		utils.ConsoleOutput("an error ocurred, domainJoinUserPassword cannot be empty")
 		exitCode = 1
+		return
 	}
 	// TODO: remove this and remove from gitignore file
 	//domainJoinUserPassword = ""
