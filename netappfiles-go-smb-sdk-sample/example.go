@@ -21,8 +21,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/Azure-Samples/netappfiles-go-smb-sdk-sample/src/internal/sdkutils"
-	"github.com/Azure-Samples/netappfiles-go-smb-sdk-sample/src/internal/utils"
+	"github.com/Azure-Samples/netappfiles-go-smb-sdk-sample/netappfiles-go-smb-sdk-sample/internal/sdkutils"
+	"github.com/Azure-Samples/netappfiles-go-smb-sdk-sample/netappfiles-go-smb-sdk-sample/internal/utils"
 	"github.com/Azure/azure-sdk-for-go/services/netapp/mgmt/2020-02-01/netapp"
 	"github.com/Azure/go-autorest/autorest/to"
 	"github.com/yelinaung/go-haikunator"

@@ -331,6 +331,6 @@ ASALocalRun/
 
 
 # Go build output
-/**/netappfiles-go-smb-sdk-sample
-/**/netappfiles-go-smb-sdk-sample.*
-/**/example.go
+/netappfiles-go-smb-sdk-sample/netappfiles-go-smb-sdk-sample
+/netappfiles-go-smb-sdk-sample/netappfiles-go-smb-sdk-sample.*
+#/netappfiles-go-smb-sdk-sample/example.go
