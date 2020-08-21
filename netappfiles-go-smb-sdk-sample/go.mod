@@ -1,4 +1,4 @@
-module github.com/Azure-Samples/netappfiles-go-smb-sdk-sample
+module github.com/Azure-Samples/netappfiles-go-smb-sdk-sample/netappfiles-go-smb-sdk-sample
 
 go 1.13
 

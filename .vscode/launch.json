@@ -10,7 +10,7 @@
             "type": "go",
             "request": "launch",
             "mode": "debug",
-            "program": "${workspaceRoot}/src/example.go"
+            "program": "${workspaceRoot}/netappfiles-go-smb-sdk-sample/example.go"
         }
     ]
 }
