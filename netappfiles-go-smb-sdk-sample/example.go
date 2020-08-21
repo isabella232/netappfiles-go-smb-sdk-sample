@@ -53,10 +53,10 @@ var (
 
 	// SMB related variables
 	domainJoinUserName     = "pmcadmin"
-	domainJoinUserPassword = ""          // **Leave this blank since the user will be prompted to provide this password at the begining**
-	dnsList                = "10.0.0.4"  // Please notice that this is a comma-separated string
-	adFQDN                 = "anf.local" // FQDN of the Domain where the smb server will be created/domain joined
-	smbServerNamePrefix    = "pmc02"     // This needs to be maximum 10 characters in length and during the domain join process a random string gets appended.
+	domainJoinUserPassword = ""             // **Leave this blank since the user will be prompted to provide this password at the begining**
+	dnsList                = "10.0.0.4"     // Please notice that this is a comma-separated string
+	adFQDN                 = "pmcglobal.me" // FQDN of the Domain where the smb server will be created/domain joined
+	smbServerNamePrefix    = "pmc03"        // This needs to be maximum 10 characters in length and during the domain join process a random string gets appended.
 
 	exitCode       int
 	smbVolumeID    string = ""
@@ -74,13 +74,13 @@ func main() {
 	utils.PrintHeader("Azure NetAppFiles Go SMB SDK Sample - sample application that creates an SMB volume together with Account and Capacity Pool.")
 
 	// Getting Active Directory Identity's password
-	// domainJoinUserPassword = utils.GetPassword("Please type Active Directory's user password that will domain join ANF's SMB server and press [ENTER]:")
-	// if domainJoinUserPassword == "" {
-	// 	utils.ConsoleOutput("an error ocurred, domainJoinUserPassword cannot be empty")
-	// 	exitCode = 1
-	// }
+	domainJoinUserPassword = utils.GetPassword("Please type Active Directory's user password that will domain join ANF's SMB server and press [ENTER]:")
+	if domainJoinUserPassword == "" {
+		utils.ConsoleOutput("an error ocurred, domainJoinUserPassword cannot be empty")
+		exitCode = 1
+	}
 	// TODO: remove this and remove from gitignore file
-	domainJoinUserPassword = ""
+	//domainJoinUserPassword = ""
 
 	// Getting subscription ID from authentication file
 	config, err := utils.ReadAzureBasicInfoJSON(os.Getenv("AZURE_AUTH_LOCATION"))
@@ -121,7 +121,7 @@ func main() {
 			DNS:           &dnsList,
 			Domain:        &adFQDN,
 			Username:      &domainJoinUserName,
-			Password:      &domainJoinUserPassword,
+			Password:      to.StringPtr(domainJoinUserPassword),
 			SmbServerName: &smbServerNamePrefix,
 		},
 	}
