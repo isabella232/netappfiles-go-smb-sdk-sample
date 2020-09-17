@@ -34,10 +34,10 @@ const (
 
 var (
 	shouldCleanUp         bool   = false
-	location              string = "eastus"
+	location              string = "westus"
 	resourceGroupName     string = "anf-smb-rg"
 	vnetResourceGroupName string = "anf-smb-rg"
-	vnetName              string = "adVNET"
+	vnetName              string = "westus-vnet01"
 	subnetName            string = "anf-sn"
 	anfAccountName        string = haikunator.New(time.Now().UTC().UnixNano()).Haikunate()
 	capacityPoolName      string = "Pool01"
@@ -53,10 +53,10 @@ var (
 
 	// SMB related variables
 	domainJoinUserName     = "pmcadmin"
-	domainJoinUserPassword = ""             // **Leave this blank since the user will be prompted to provide this password at the begining**
-	dnsList                = "10.0.0.4"     // Please notice that this is a comma-separated string
-	adFQDN                 = "pmcglobal.me" // FQDN of the Domain where the smb server will be created/domain joined
-	smbServerNamePrefix    = "pmc03"        // This needs to be maximum 10 characters in length and during the domain join process a random string gets appended.
+	domainJoinUserPassword = ""          // **Leave this blank since the user will be prompted to provide this password at the begining**
+	dnsList                = "10.2.0.4"  // Please notice that this is a comma-separated string
+	adFQDN                 = "anf.local" // FQDN of the Domain where the smb server will be created/domain joined
+	smbServerNamePrefix    = "pmc03"     // This needs to be maximum 10 characters in length and during the domain join process a random string gets appended.
 
 	exitCode       int
 	smbVolumeID    string = ""
@@ -80,8 +80,6 @@ func main() {
 		exitCode = 1
 		return
 	}
-	// TODO: remove this and remove from gitignore file
-	//domainJoinUserPassword = ""
 
 	// Getting subscription ID from authentication file
 	config, err := utils.ReadAzureBasicInfoJSON(os.Getenv("AZURE_AUTH_LOCATION"))
@@ -122,7 +120,7 @@ func main() {
 			DNS:           &dnsList,
 			Domain:        &adFQDN,
 			Username:      &domainJoinUserName,
-			Password:      to.StringPtr(domainJoinUserPassword),
+			Password:      &domainJoinUserPassword,
 			SmbServerName: &smbServerNamePrefix,
 		},
 	}
@@ -154,7 +152,7 @@ func main() {
 		return
 	}
 	capacityPoolID = *capacityPool.ID
-	utils.ConsoleOutput(fmt.Sprintf("Capacity Pool successfully created, resource id: %v", *capacityPool.ID))
+	utils.ConsoleOutput(fmt.Sprintf("Capacity Pool successfully created, resource id: %v", capacityPoolID))
 
 	// SMB volume creation
 	utils.ConsoleOutput("Creating SMB Volume...")
@@ -174,16 +172,19 @@ func main() {
 		false,
 		sampleTags,
 	)
+
 	if err != nil {
 		utils.ConsoleOutput(fmt.Sprintf("an error ocurred while creating SMB volume: %v", err))
 		exitCode = 1
 		return
 	}
+
 	smbVolumeID = *smbVolume.ID
-	utils.ConsoleOutput(fmt.Sprintf("SMB volume successfully created, resource id: %v", *smbVolume.ID))
-	mountTargets := smbVolume.VolumeProperties.MountTargets
-	utils.ConsoleOutput(fmt.Sprintf("\t====> MountTargets: %v", mountTargets))
-	//utils.ConsoleOutput(fmt.Sprintf("\t====> SMB Server FQDN: %v", smbServerFQDN))
+	utils.ConsoleOutput(fmt.Sprintf("SMB volume successfully created, resource id: %v", smbVolumeID))
+
+	mountTargets := *smbVolume.MountTargets
+	//*smbVolume.MountTargets[0].SmbServerFqdn
+	utils.ConsoleOutput(fmt.Sprintf("\t====> SMB Server FQDN: %v", *mountTargets[0].SmbServerFqdn))
 }
 
 func exit(cntx context.Context) {
