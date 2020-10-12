@@ -23,7 +23,7 @@ import (
 
 	"github.com/Azure-Samples/netappfiles-go-smb-sdk-sample/netappfiles-go-smb-sdk-sample/internal/sdkutils"
 	"github.com/Azure-Samples/netappfiles-go-smb-sdk-sample/netappfiles-go-smb-sdk-sample/internal/utils"
-	"github.com/Azure/azure-sdk-for-go/services/netapp/mgmt/2020-02-01/netapp"
+	"github.com/Azure/azure-sdk-for-go/profiles/latest/netapp/mgmt/netapp"
 	"github.com/Azure/go-autorest/autorest/to"
 	"github.com/yelinaung/go-haikunator"
 )
@@ -171,6 +171,7 @@ func main() {
 		false,
 		false,
 		sampleTags,
+		netapp.VolumePropertiesDataProtection{}, // This empty object is provided as nil since dataprotection is not scope of this sample
 	)
 
 	if err != nil {

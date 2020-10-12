@@ -124,7 +124,7 @@ func GetAnfCapacityPool(resourceURI string) string {
 		return ""
 	}
 
-	accountName := GetResourceValue(resourceURI, "/netAppAccounts")
+	accountName := GetResourceValue(resourceURI, "/capacityPools")
 	if accountName == "" {
 		return ""
 	}

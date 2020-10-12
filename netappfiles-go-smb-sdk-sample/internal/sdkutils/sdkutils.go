@@ -19,7 +19,7 @@ import (
 	"github.com/Azure-Samples/netappfiles-go-smb-sdk-sample/netappfiles-go-smb-sdk-sample/internal/uri"
 	"github.com/Azure-Samples/netappfiles-go-smb-sdk-sample/netappfiles-go-smb-sdk-sample/internal/utils"
 
-	"github.com/Azure/azure-sdk-for-go/services/netapp/mgmt/2020-02-01/netapp"
+	"github.com/Azure/azure-sdk-for-go/services/netapp/mgmt/2020-06-01/netapp"
 	"github.com/Azure/azure-sdk-for-go/services/resources/mgmt/2019-10-01/resources"
 	"github.com/Azure/go-autorest/autorest/to"
 )
@@ -233,7 +233,7 @@ func CreateAnfCapacityPool(ctx context.Context, location, resourceGroupName, acc
 }
 
 // CreateAnfVolume creates an ANF volume within a Capacity Pool
-func CreateAnfVolume(ctx context.Context, location, resourceGroupName, accountName, poolName, volumeName, serviceLevel, subnetID, snapshotID string, protocolTypes []string, volumeUsageQuota int64, unixReadOnly, unixReadWrite bool, tags map[string]*string) (netapp.Volume, error) {
+func CreateAnfVolume(ctx context.Context, location, resourceGroupName, accountName, poolName, volumeName, serviceLevel, subnetID, snapshotID string, protocolTypes []string, volumeUsageQuota int64, unixReadOnly, unixReadWrite bool, tags map[string]*string, dataProtectionObject netapp.VolumePropertiesDataProtection) (netapp.Volume, error) {
 
 	if len(protocolTypes) > 1 {
 		return netapp.Volume{}, fmt.Errorf("only one protocol type is supported at this time")
@@ -280,6 +280,7 @@ func CreateAnfVolume(ctx context.Context, location, resourceGroupName, accountNa
 		SubnetID:       to.StringPtr(subnetID),
 		UsageThreshold: to.Int64Ptr(volumeUsageQuota),
 		CreationToken:  to.StringPtr(volumeName),
+		DataProtection: &dataProtectionObject,
 	}
 
 	future, err := volumeClient.CreateOrUpdate(
@@ -333,6 +334,37 @@ func UpdateAnfVolume(ctx context.Context, location, resourceGroupName, accountNa
 	}
 
 	return volume, nil
+}
+
+// AuthorizeReplication - authorizes volume replication
+func AuthorizeReplication(ctx context.Context, resourceGroupName, accountName, poolName, volumeName, remoteVolumeResourceID string) error {
+
+	volumeClient, err := getVolumesClient()
+	if err != nil {
+		return err
+	}
+
+	future, err := volumeClient.AuthorizeReplication(
+		ctx,
+		resourceGroupName,
+		accountName,
+		poolName,
+		volumeName,
+		netapp.AuthorizeRequest{
+			RemoteVolumeResourceID: to.StringPtr(remoteVolumeResourceID),
+		},
+	)
+
+	if err != nil {
+		return fmt.Errorf("cannot authorize volume replication: %v", err)
+	}
+
+	err = future.WaitForCompletionRef(ctx, volumeClient.Client)
+	if err != nil {
+		return fmt.Errorf("cannot get authorize volume replication future response: %v", err)
+	}
+
+	return nil
 }
 
 // CreateAnfSnapshot creates a Snapshot from an ANF volume
@@ -529,4 +561,56 @@ func WaitForNoANFResource(ctx context.Context, resourceID string, intervalInSec 
 	}
 
 	return fmt.Errorf("exceeded number of retries: %v", retries)
+}
+
+// WaitForANFResource waits for a specified resource to be fully ready following a creation operation.
+func WaitForANFResource(ctx context.Context, resourceID string, intervalInSec int, retries int) error {
+
+	var err error
+
+	for i := 0; i < retries; i++ {
+		time.Sleep(time.Duration(intervalInSec) * time.Second)
+		if uri.IsAnfSnapshot(resourceID) {
+			client, _ := getSnapshotsClient()
+			_, err = client.Get(
+				ctx,
+				uri.GetResourceGroup(resourceID),
+				uri.GetAnfAccount(resourceID),
+				uri.GetAnfCapacityPool(resourceID),
+				uri.GetAnfVolume(resourceID),
+				uri.GetAnfSnapshot(resourceID),
+			)
+		} else if uri.IsAnfVolume(resourceID) {
+			client, _ := getVolumesClient()
+			_, err = client.Get(
+				ctx,
+				uri.GetResourceGroup(resourceID),
+				uri.GetAnfAccount(resourceID),
+				uri.GetAnfCapacityPool(resourceID),
+				uri.GetAnfVolume(resourceID),
+			)
+		} else if uri.IsAnfCapacityPool(resourceID) {
+			client, _ := getPoolsClient()
+			_, err = client.Get(
+				ctx,
+				uri.GetResourceGroup(resourceID),
+				uri.GetAnfAccount(resourceID),
+				uri.GetAnfCapacityPool(resourceID),
+			)
+		} else if uri.IsAnfAccount(resourceID) {
+			client, _ := getAccountsClient()
+			_, err = client.Get(
+				ctx,
+				uri.GetResourceGroup(resourceID),
+				uri.GetAnfAccount(resourceID),
+			)
+		}
+
+		// In this case, we exit when there is no error
+		if err == nil {
+			return nil
+		}
+	}
+
+	return fmt.Errorf("resource still not found after number of retries: %v, error: %v", retries, err)
 }

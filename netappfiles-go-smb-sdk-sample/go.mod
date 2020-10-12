@@ -3,7 +3,7 @@ module github.com/Azure-Samples/netappfiles-go-smb-sdk-sample/netappfiles-go-smb
 go 1.13
 
 require (
-	github.com/Azure/azure-sdk-for-go v45.1.0+incompatible
+	github.com/Azure/azure-sdk-for-go v46.4.0+incompatible
 	github.com/Azure/go-autorest v14.2.0+incompatible
 	github.com/Azure/go-autorest/autorest v0.11.3
 	github.com/Azure/go-autorest/autorest/adal v0.9.1
