@@ -7,9 +7,11 @@
 
 *Features*
 * API Version bump up
+* sdkutils.go updated to be in sync with other ANF Go samples
 
 *Bug Fixes*
 * GetAnfCapacityPool bug fix when it sending the wrong string (account)
+* Changes related to new arguments on sdkutils.go
 
 *Breaking Changes*
 * N/A
