@@ -208,7 +208,7 @@ func exit(cntx context.Context) {
 			exitCode = 1
 			return
 		}
-		sdkutils.WaitForNoANFResource(cntx, smbVolumeID, 60, 60)
+		sdkutils.WaitForNoANFResource(cntx, smbVolumeID, 60, 60, false)
 		utils.ConsoleOutput("\tVolume successfully deleted")
 
 		// Pool Cleanup
@@ -224,7 +224,7 @@ func exit(cntx context.Context) {
 			exitCode = 1
 			return
 		}
-		sdkutils.WaitForNoANFResource(cntx, capacityPoolID, 60, 60)
+		sdkutils.WaitForNoANFResource(cntx, capacityPoolID, 60, 60, false)
 		utils.ConsoleOutput("\tCapacity pool successfully deleted")
 
 		// Account Cleanup

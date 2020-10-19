@@ -235,8 +235,12 @@ func CreateAnfCapacityPool(ctx context.Context, location, resourceGroupName, acc
 // CreateAnfVolume creates an ANF volume within a Capacity Pool
 func CreateAnfVolume(ctx context.Context, location, resourceGroupName, accountName, poolName, volumeName, serviceLevel, subnetID, snapshotID string, protocolTypes []string, volumeUsageQuota int64, unixReadOnly, unixReadWrite bool, tags map[string]*string, dataProtectionObject netapp.VolumePropertiesDataProtection) (netapp.Volume, error) {
 
-	if len(protocolTypes) > 1 {
-		return netapp.Volume{}, fmt.Errorf("only one protocol type is supported at this time")
+	if len(protocolTypes) > 2 {
+		return netapp.Volume{}, fmt.Errorf("maximum of two protocol types are supported")
+	}
+
+	if len(protocolTypes) > 1 && utils.Contains(protocolTypes, "NFSv4.1") {
+		return netapp.Volume{}, fmt.Errorf("only cifs/nfsv3 protocol types are supported as dual protocol")
 	}
 
 	_, found := utils.FindInSlice(validProtocols, protocolTypes[0])
@@ -362,6 +366,34 @@ func AuthorizeReplication(ctx context.Context, resourceGroupName, accountName, p
 	err = future.WaitForCompletionRef(ctx, volumeClient.Client)
 	if err != nil {
 		return fmt.Errorf("cannot get authorize volume replication future response: %v", err)
+	}
+
+	return nil
+}
+
+// DeleteAnfVolumeReplication - authorizes volume replication
+func DeleteAnfVolumeReplication(ctx context.Context, resourceGroupName, accountName, poolName, volumeName string) error {
+
+	volumeClient, err := getVolumesClient()
+	if err != nil {
+		return err
+	}
+
+	future, err := volumeClient.DeleteReplication(
+		ctx,
+		resourceGroupName,
+		accountName,
+		poolName,
+		volumeName,
+	)
+
+	if err != nil {
+		return fmt.Errorf("cannot delete volume replication: %v", err)
+	}
+
+	err = future.WaitForCompletionRef(ctx, volumeClient.Client)
+	if err != nil {
+		return fmt.Errorf("cannot get delete volume replication future response: %v", err)
 	}
 
 	return nil
@@ -512,7 +544,7 @@ func DeleteAnfAccount(ctx context.Context, resourceGroupName, accountName string
 // WaitForNoANFResource waits for a specified resource to don't exist anymore following a deletion.
 // This is due to a known issue related to ARM Cache where the state of the resource is still cached within ARM infrastructure
 // reporting that it still exists so looping into a get process will return 404 as soon as the cached state expires
-func WaitForNoANFResource(ctx context.Context, resourceID string, intervalInSec int, retries int) error {
+func WaitForNoANFResource(ctx context.Context, resourceID string, intervalInSec int, retries int, checkForReplication bool) error {
 
 	var err error
 
@@ -530,13 +562,23 @@ func WaitForNoANFResource(ctx context.Context, resourceID string, intervalInSec 
 			)
 		} else if uri.IsAnfVolume(resourceID) {
 			client, _ := getVolumesClient()
-			_, err = client.Get(
-				ctx,
-				uri.GetResourceGroup(resourceID),
-				uri.GetAnfAccount(resourceID),
-				uri.GetAnfCapacityPool(resourceID),
-				uri.GetAnfVolume(resourceID),
-			)
+			if checkForReplication == false {
+				_, err = client.Get(
+					ctx,
+					uri.GetResourceGroup(resourceID),
+					uri.GetAnfAccount(resourceID),
+					uri.GetAnfCapacityPool(resourceID),
+					uri.GetAnfVolume(resourceID),
+				)
+			} else {
+				_, err = client.ReplicationStatusMethod(
+					ctx,
+					uri.GetResourceGroup(resourceID),
+					uri.GetAnfAccount(resourceID),
+					uri.GetAnfCapacityPool(resourceID),
+					uri.GetAnfVolume(resourceID),
+				)
+			}
 		} else if uri.IsAnfCapacityPool(resourceID) {
 			client, _ := getPoolsClient()
 			_, err = client.Get(
@@ -564,7 +606,7 @@ func WaitForNoANFResource(ctx context.Context, resourceID string, intervalInSec 
 }
 
 // WaitForANFResource waits for a specified resource to be fully ready following a creation operation.
-func WaitForANFResource(ctx context.Context, resourceID string, intervalInSec int, retries int) error {
+func WaitForANFResource(ctx context.Context, resourceID string, intervalInSec int, retries int, checkForReplication bool) error {
 
 	var err error
 
@@ -582,13 +624,23 @@ func WaitForANFResource(ctx context.Context, resourceID string, intervalInSec in
 			)
 		} else if uri.IsAnfVolume(resourceID) {
 			client, _ := getVolumesClient()
-			_, err = client.Get(
-				ctx,
-				uri.GetResourceGroup(resourceID),
-				uri.GetAnfAccount(resourceID),
-				uri.GetAnfCapacityPool(resourceID),
-				uri.GetAnfVolume(resourceID),
-			)
+			if checkForReplication == false {
+				_, err = client.Get(
+					ctx,
+					uri.GetResourceGroup(resourceID),
+					uri.GetAnfAccount(resourceID),
+					uri.GetAnfCapacityPool(resourceID),
+					uri.GetAnfVolume(resourceID),
+				)
+			} else {
+				_, err = client.ReplicationStatusMethod(
+					ctx,
+					uri.GetResourceGroup(resourceID),
+					uri.GetAnfAccount(resourceID),
+					uri.GetAnfCapacityPool(resourceID),
+					uri.GetAnfVolume(resourceID),
+				)
+			}
 		} else if uri.IsAnfCapacityPool(resourceID) {
 			client, _ := getPoolsClient()
 			_, err = client.Get(
