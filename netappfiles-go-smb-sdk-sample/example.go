@@ -125,7 +125,7 @@ func main() {
 		},
 	}
 
-	account, err := sdkutils.CreateAnfAccount(cntx, location, resourceGroupName, anfAccountName, activeDirectories, sampleTags)
+	account, err := sdkutils.CreateANFAccount(cntx, location, resourceGroupName, anfAccountName, activeDirectories, sampleTags)
 	if err != nil {
 		utils.ConsoleOutput(fmt.Sprintf("an error ocurred while creating account: %v", err))
 		exitCode = 1
@@ -136,7 +136,7 @@ func main() {
 
 	// Capacity pool creation
 	utils.ConsoleOutput("Creating Capacity Pool...")
-	capacityPool, err := sdkutils.CreateAnfCapacityPool(
+	capacityPool, err := sdkutils.CreateANFCapacityPool(
 		cntx,
 		location,
 		resourceGroupName,
@@ -156,7 +156,7 @@ func main() {
 
 	// SMB volume creation
 	utils.ConsoleOutput("Creating SMB Volume...")
-	smbVolume, err := sdkutils.CreateAnfVolume(
+	smbVolume, err := sdkutils.CreateANFVolume(
 		cntx,
 		location,
 		resourceGroupName,
@@ -196,7 +196,7 @@ func exit(cntx context.Context) {
 
 		// SMB Volumes Cleanup
 		utils.ConsoleOutput("\tCleaning up SMB volume...")
-		err := sdkutils.DeleteAnfVolume(
+		err := sdkutils.DeleteANFVolume(
 			cntx,
 			resourceGroupName,
 			anfAccountName,
@@ -213,7 +213,7 @@ func exit(cntx context.Context) {
 
 		// Pool Cleanup
 		utils.ConsoleOutput("\tCleaning up capacity pool...")
-		err = sdkutils.DeleteAnfCapacityPool(
+		err = sdkutils.DeleteANFCapacityPool(
 			cntx,
 			resourceGroupName,
 			anfAccountName,
@@ -229,7 +229,7 @@ func exit(cntx context.Context) {
 
 		// Account Cleanup
 		utils.ConsoleOutput("\tCleaning up account...")
-		err = sdkutils.DeleteAnfAccount(
+		err = sdkutils.DeleteANFAccount(
 			cntx,
 			resourceGroupName,
 			anfAccountName,
