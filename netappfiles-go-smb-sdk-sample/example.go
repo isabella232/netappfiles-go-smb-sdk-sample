@@ -3,15 +3,14 @@
 // This source code is licensed under the MIT license found in the
 // LICENSE file in the root directory of this source tree.
 
-// This sample code creates an Azure Netapp Files Account, a Capacity Pool,
-// and two volumes, one NFSv3 and one NFSv4.1, then it takes a snapshot
-// of the first volume (NFSv3) and performs clean up if the variable
-// shouldCleanUp is changed to true.
+// This sample code creates an Azure Netapp Files Account with an
+// Active Directory object then a Capacity Pool and finally an SMB volume,
+// for clean up to take place, shouldCleanUp needs to be changed to true.
 //
 // This package uses go-haikunator package (https://github.com/yelinaung/go-haikunator)
 // port from Python's haikunator module and therefore used here just for sample simplification,
 // this doesn't mean that it is endorsed/thouroughly tested by any means, use at own risk.
-// Feel free to provide your own names on variables using it.
+// Feel free to provide your own names for variables using it.
 
 package main
 
